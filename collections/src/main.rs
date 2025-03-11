@@ -74,4 +74,67 @@ fn main() {
     let mut s = String::from("lo");
     s.push('l');
     println!("{}", s);
+
+    // Concatenation with the + Operator or the format! Macro
+    let s1 = String::from("Hello, ");
+    let s2 = String::from("world!");
+    let s3 = s1 + &s2; // s1 has been moved here and can no longer be used
+    println!("{}", s3);
+
+    let s1 = String::from("tic");
+    let s2 = String::from("tac");
+    let s3 = String::from("toe");
+    let s = format!("{s1}-{s2}-{s3}");
+    println!("{}", s);
+
+    // Indexing into Strings
+    let s1 = String::from("hello");
+    // let h = s1[0]; // This will cause an error
+
+    let hello = String::from("Hola");
+    println!("{}", hello.len()); // 4
+    let hello = String::from("Здравствуйте");
+    println!("{}", hello.len()); // 24: This is because each character is 2 bytes
+
+    // vec! of u8
+    // [224, 164, 168, 224, 164, 174, 224, 164, 184, 224, 165, 141, 224, 164, 164,
+    // 224, 165, 135]
+    //
+    // Scalar representation of the string "नमस्ते" in UTF-8
+    // ['न', 'म', 'स', '्', 'त', 'े']
+    //
+    // Grapheme clusters
+    // ["न", "म", "स्", "ते"]
+
+    // Slicing Strings
+    let hello = "Здравствуйте";
+    let s = &hello[0..4];
+    println!("{}", s);
+    // let s = &hello[0..1]; // This will cause an error
+
+    // Iterating over Strings
+    for c in "Зд".chars() {
+        println!("{c}");
+    }
+
+    for b in "Зд".bytes() {
+        println!("{b}");
+    }
+
+    // HASH MAPS
+    use std::collections::HashMap;
+
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
+    println!("{:#?}", scores);
+
+    // Accessing Values in a Hash Map
+    let team_name = String::from("Blue");
+    let score = scores.get(&team_name).copied().unwrap_or(0);
+    println!("{score}");
+
+    for (key, value) in &scores {
+        println!("{key}: {value}");
+    }
 }
