@@ -173,4 +173,5 @@ fn main() {
 
     // WORKSHOPS
     workshops::workshop1::solve();
+    workshops::workshop2::solve();
 }
