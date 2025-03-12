@@ -1,4 +1,5 @@
 pub mod workshop1 {
+    /// Workshop 1: Vector of Integers
     use std::collections::HashMap;
 
     pub fn solve() {
@@ -37,6 +38,7 @@ pub mod workshop1 {
 }
 
 pub mod workshop2 {
+    /// Workshop 2: Convert string to Pig Latin
     pub fn solve() {
         println!("\n");
 
@@ -60,6 +62,7 @@ pub mod workshop2 {
     }
 
     fn convert_to_pig_latin(word: &String) -> String {
+        // Convert a word to Pig Latin
         let vowels = vec!['a', 'e', 'i', 'o', 'u', 'y'];
         let first_char = word.chars().next().unwrap();
         let pig_latin: String;
@@ -71,5 +74,71 @@ pub mod workshop2 {
         }
 
         pig_latin
+    }
+}
+
+pub mod workshop3 {
+    /// Workshop 3: Company Department
+    use std::collections::HashMap;
+    use std::io;
+
+    pub fn solve() {
+        println!("\n");
+
+        let mut company_department: HashMap<String, Vec<String>> = HashMap::new();
+
+        // Program loop to handle a company departments
+        loop {
+            println!("Chose your option:");
+            println!("1: Add a person to a department");
+            println!("2: Show department list");
+            println!("3: Stop the program");
+
+            let mut option = String::new();
+            io::stdin().read_line(&mut option).unwrap();
+
+            match option.trim() {
+                "1" => add_employee(&mut company_department),
+                "2" => show_department_list(&company_department),
+                "3" => {
+                    println!("Shutting down");
+                    break;
+                }
+                _ => println!("Invalid input"),
+            }
+        }
+
+        println!("\n");
+    }
+
+    fn add_employee(company_department: &mut HashMap<String, Vec<String>>) {
+        // Add an employee to a department
+        println!("Type in the name of your employee: ");
+        let mut employee = String::new();
+        io::stdin().read_line(&mut employee).unwrap();
+        println!("\nChose a department to place {employee}: ");
+        let mut department = String::new();
+        io::stdin().read_line(&mut department).unwrap();
+
+        if !company_department.contains_key(&department) {
+            company_department.insert(department.clone(), Vec::new());
+        }
+        let employee_list = company_department.get_mut(&department).unwrap();
+        employee_list.push(String::from(employee.trim()));
+        println!("Employee {employee} has been added to {department} department\n");
+    }
+
+    fn show_department_list(company_department: &HashMap<String, Vec<String>>) -> () {
+        // Show the list of employees in a department
+        println!("Type in the department: ");
+        let mut department = String::new();
+        io::stdin().read_line(&mut department).unwrap();
+
+        if !company_department.contains_key(&department) {
+            println!("{department} does not exist!");
+            return;
+        }
+        println!("{department} employees:");
+        println!("{:#?}", company_department.get(&department).unwrap())
     }
 }
