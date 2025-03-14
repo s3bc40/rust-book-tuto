@@ -21,7 +21,6 @@
 
 //     largest
 // }
-
 fn largest<T: std::cmp::PartialOrd>(list: &[T]) -> &T {
     let mut largest = &list[0];
 
@@ -64,6 +63,7 @@ impl<X1, Y1> Point<X1, Y1> {
     }
 }
 
+use aggregator::{NewsArticle, Summary, Tweet};
 fn main() {
     // Fn generic
     let number_list = vec![34, 50, 25, 100, 65];
@@ -92,4 +92,118 @@ fn main() {
     let p3 = p1.mixup(p2);
     println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
 
+    // Implementing trait aggregator example
+    let tweet = Tweet {
+        username: String::from("horse_ebooks"),
+        content: String::from("of course, as you probably already know, people"),
+        reply: false,
+        retweet: false,
+    };
+
+    println!("1 new tweet: {}", tweet.summarize());
+
+    // With default behavior
+    let article = NewsArticle {
+        headline: String::from("Penguins win the Stanley Cup Championship!"),
+        location: String::from("Pittsburgh, PA, USA"),
+        author: String::from("Iceburgh"),
+        content: String::from(
+            "The Pittsburgh Penguins once again are the best \
+             hockey team in the NHL.",
+        ),
+    };
+
+    println!("New article available! {}", article.summarize());
+
+    // Trait as Parameters
+    pub fn notify(item: &impl Summary) {
+        println!("Breaking news! {}", item.summarize());
+    }
+    // Trait bound syntax
+    // Equivalent to previous impl
+    // pub fn notify<T: Summary>(item: &T) {
+    //     println!("Breaking news! {}", item.summarize());
+    // }
+
+    // Appropriate if we want item1 and 2 param be different
+    // pub fn notify(item1: &impl Summary, item2: &impl Summary) {
+
+    // If we want to force the type, trait bound syntax is better
+    // pub fn notify<T: Summary>(item1: &T, item2: &T) {
+
+    // Multiple trait bounds with + syntax
+    // pub fn notify(item: &(impl Summary + Display)) {
+    // pub fn notify<T: Summary + Display>(item: &T) {
+
+    notify(&article);
+
+    // Cleared trait bounds with where clause
+    // From this
+    // fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> i32 {
+    // To this
+    // fn some_function<T, U>(t: &T, u: &U) -> i32
+    // where
+    //     T: Display + Clone,
+    //     U: Clone + Debug,
+    // {
+
+    // Returning types that implements traits
+    fn returns_summarizable() -> impl Summary {
+        Tweet {
+            username: String::from("horse_ebooks"),
+            content: String::from("of course, as you probably already know, people"),
+            reply: false,
+            retweet: false,
+        }
+    }
+
+    // This would not work because impl Trait allows to retunr one type
+    // fn returns_summarizable(switch: bool) -> impl Summary {
+    //     if switch {
+    //         NewsArticle {
+    //             headline: String::from(
+    //                 "Penguins win the Stanley Cup Championship!",
+    //             ),
+    //             location: String::from("Pittsburgh, PA, USA"),
+    //             author: String::from("Iceburgh"),
+    //             content: String::from(
+    //                 "The Pittsburgh Penguins once again are the best \
+    //                  hockey team in the NHL.",
+    //             ),
+    //         }
+    //     } else {
+    //         Tweet {
+    //             username: String::from("horse_ebooks"),
+    //             content: String::from(
+    //                 "of course, as you probably already know, people",
+    //             ),
+    //             reply: false,
+    //             retweet: false,
+    //         }
+    //     }
+    // }
+
+    // Using trait bounds to conditionnally implement methods
+    use std::fmt::Display;
+
+    struct Pair<T> {
+        x: T,
+        y: T,
+    }
+
+    impl<T> Pair<T> {
+        fn new(x: T, y: T) -> Self {
+            Self { x, y }
+        }
+    }
+
+    impl<T: Display + PartialOrd> Pair<T> {
+        fn cmp_display(&self) {
+            if self.x >= self.y {
+                println!("The largest member is x = {}", self.x);
+            } else {
+                println!("The largest member is y = {}", self.y);
+            }
+        }
+    }
 }
