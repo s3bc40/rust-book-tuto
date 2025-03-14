@@ -63,6 +63,26 @@ impl<X1, Y1> Point<X1, Y1> {
     }
 }
 
+// Lifetime struct
+struct ImportantExcerpt<'a> {
+    part: &'a str,
+}
+
+// Lifetime annot methods
+// Checl lifetime elision rule 3 steps
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        3
+    }
+
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        println!("Attention please: {announcement}");
+        self.part
+    }
+}
+
+
+
 use aggregator::{NewsArticle, Summary, Tweet};
 fn main() {
     // Fn generic
@@ -285,6 +305,27 @@ fn main() {
     println!("The longest string is {result}")
 
     // Thinking in term of lifetime
+
+    // Ultimately, lifetime syntax is about connecting the lifetimes of various parameters and return values of functions
+
+    // Lifetime annotations in struct
+    let novel = String::from("Call me Ishmael. Some years ago...");
+    let first_sentence = novel.split('.').next().unwrap();
+    let i = ImportantExcerpt {
+        part: first_sentence,
+    };
+
+    // Static lifetime
+    // affected reference can live for the entire duration of the program
+    let s: &'static str = "I have a static lifetime.";
+    // All string literals have the 'static lifetime,
+
+
+}
+
+// Longest with lifetime annotation
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
 }
 
 // Won't compile because the param lifetime is not explicit
@@ -296,17 +337,42 @@ fn main() {
 //     }
 // }
 
-// Ultimately, lifetime syntax is about connecting the lifetimes of various parameters and return values of functions
-
-
-
-// Longest with lifetime annotation
-fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() > y.len() { x } else { y }
-}
-
 // returning value not refering to param won't compile due to dangling ref
 // fn longest<'a>(x: &str, y: &str) -> &'a str {
 //     let result = String::from("really long string");
 //     result.as_str()
 // }
+
+// Lifetime Elision
+// Historical decision of adding pattern to compiler -> no annotations
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+// The patterns programmed into Rust’s analysis of references are called the lifetime elision rules
+
+// Generic type param, Trait bounds and Lifetime
+use std::fmt::Display;
+
+fn longest_with_an_announcement<'a, T>(
+    x: &'a str,
+    y: &'a str,
+    ann: T,
+) -> &'a str
+where
+    T: Display,
+{
+    println!("Announcement! {ann}");
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
