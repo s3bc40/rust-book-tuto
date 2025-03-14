@@ -206,4 +206,107 @@ fn main() {
             }
         }
     }
+
+    // Lifetimes validation references
+
+    // It won t compile
+    // let r;
+
+    // {
+    //     let x = 5;
+    //     r = &x;
+    // }
+
+    // println!("r: {r}");
+
+    // Borrow Checker in rust compiler
+    // fn main() {
+    //     let r;                // ---------+-- 'a
+    //                           //          |
+    //     {                     //          |
+    //         let x = 5;        // -+-- 'b  |
+    //         r = &x;           //  |       |
+    //     }                     // -+       |
+    //                           //          |
+    //     println!("r: {r}");   //          |
+    // }                         // ---------+
+
+    let x = 5;
+    let r = &x;
+    println!("r: {r}");
+
+    // Generic lifetimes in fn
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+
+    let result = longest(string1.as_str(), string2);
+    println!("The longest string is {result}");
+
+    // Lifetime annotations
+    // &i32        // a reference
+    // &'a i32     // a reference with an explicit lifetime
+    // &'a mut i32 // a mutable reference with an explicit lifetime
+
+    // Lifetime annotation restrictions
+    // It passes
+    let string1 = String::from("long string is long");
+
+    {
+        let string2 = String::from("xyz");
+        let result = longest(string1.as_str(), string2.as_str());
+        println!("The longest string is {result}");
+    }
+    // Lifetime of ref must be the smaller lifetime of 2 args
+    // let string1 = String::from("long string is long");
+    // let result;
+    // {
+    //     let string2 = String::from("xyz");
+    //     result = longest(string1.as_str(), string2.as_str()); // string2 does not live long enough
+    // }
+    // println!("The longest string is {result}");
+
+    // Workshop experiment
+    // @dev move var declarations within scopes
+    let string1 = String::from("WAKAWAKAWAKAWAKA");
+    let string3;
+    let string2;
+    let string4;
+    let result;
+    {
+        string2 = String::from("BRRRRRRRRR");
+        {
+            string3 = String::from("LALALALALALALALA");
+            {
+                string4 = String::from("45487212145497975654221");
+            }
+        }
+        result = longest(string2.as_str(), string4.as_str());
+    }
+    println!("The longest string is {result}")
+
+    // Thinking in term of lifetime
 }
+
+// Won't compile because the param lifetime is not explicit
+// fn longest(x: &str, y: &str) -> &str {
+//     if x.len() > y.len() {
+//         x
+//     } else {
+//         y
+//     }
+// }
+
+// Ultimately, lifetime syntax is about connecting the lifetimes of various parameters and return values of functions
+
+
+
+// Longest with lifetime annotation
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}
+
+// returning value not refering to param won't compile due to dangling ref
+// fn longest<'a>(x: &str, y: &str) -> &'a str {
+//     let result = String::from("really long string");
+//     result.as_str()
+// }
