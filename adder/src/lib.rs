@@ -18,11 +18,22 @@ pub fn add_two(a: usize) -> usize {
     a + 2
 }
 
+// Should panic attribute test
 pub fn greeting(name: &str) -> String {
     format!("Hello {name}")
 }
 
-// Should panic attribute test
+// Showing function output
+fn prints_and_returns_10(a: i32) -> i32 {
+    println!("I got the value {a}");
+    10
+}
+
+// Testing private fn
+fn internal_adder(left: usize, right: usize) -> usize {
+    left + right
+}
+
 pub struct Guess {
     value: i32,
 }
@@ -39,13 +50,15 @@ impl Guess {
     }
 }
 
+// Unit tests in same file of main code
+// #[cfg(test)] -> configuration and run only on `test` cmd
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn exploration() {
-        let result = add(2, 2);
+        let result: u64 = add(2, 2);
         assert_eq!(result, 4);
     }
 
@@ -114,5 +127,52 @@ mod tests {
         } else {
             Err(String::from("two plus two does not equal four"))
         }
+    }
+
+    // Functions output
+    #[test]
+    fn this_test_will_pass() {
+        let value = prints_and_returns_10(4);
+        assert_eq!(value, 10);
+    }
+
+    #[test]
+    #[ignore]
+    fn this_test_will_fail() {
+        let value = prints_and_returns_10(8);
+        assert_eq!(value, 5);
+    }
+
+    // Running subset of tests by name
+    #[test]
+    fn add_two_and_two() {
+        let result = add_two(2);
+        assert_eq!(result, 4);
+    }
+
+    #[test]
+    fn add_three_and_two() {
+        let result = add_two(3);
+        assert_eq!(result, 5);
+    }
+
+    #[test]
+    fn one_hundred() {
+        let result = add_two(100);
+        assert_eq!(result, 102);
+    }
+
+    // Ignoring tests
+    #[test]
+    #[ignore]
+    fn expensive_test() {
+        // code that takes an hour to run
+    }
+
+    // Private fn
+    #[test]
+    fn internal() {
+        let result = internal_adder(2, 2);
+        assert_eq!(result, 4);
     }
 }
