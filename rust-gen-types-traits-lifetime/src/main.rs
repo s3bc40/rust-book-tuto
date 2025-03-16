@@ -81,8 +81,6 @@ impl<'a> ImportantExcerpt<'a> {
     }
 }
 
-
-
 use aggregator::{NewsArticle, Summary, Tweet};
 fn main() {
     // Fn generic
@@ -302,7 +300,7 @@ fn main() {
         }
         result = longest(string2.as_str(), string4.as_str());
     }
-    println!("The longest string is {result}")
+    println!("The longest string is {result}");
 
     // Thinking in term of lifetime
 
@@ -319,8 +317,6 @@ fn main() {
     // affected reference can live for the entire duration of the program
     let s: &'static str = "I have a static lifetime.";
     // All string literals have the 'static lifetime,
-
-
 }
 
 // Longest with lifetime annotation
@@ -361,18 +357,10 @@ fn first_word(s: &str) -> &str {
 // Generic type param, Trait bounds and Lifetime
 use std::fmt::Display;
 
-fn longest_with_an_announcement<'a, T>(
-    x: &'a str,
-    y: &'a str,
-    ann: T,
-) -> &'a str
+fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str
 where
     T: Display,
 {
     println!("Announcement! {ann}");
-    if x.len() > y.len() {
-        x
-    } else {
-        y
-    }
+    if x.len() > y.len() { x } else { y }
 }
