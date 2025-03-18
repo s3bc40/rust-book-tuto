@@ -26,9 +26,56 @@ impl Config {
 // Extacting logic from main
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // Reading a file
-    let content = fs::read_to_string(config.file_path)?;
-    println!("With text:\n```\n{}\n```", content);
+    let contents = fs::read_to_string(config.file_path)?;
+
+    // Using search function in run
+    for line in search(&config.query, &contents) {
+        println!("{line}");
+    }
 
     // Returning errors from the run function
     Ok(())
+}
+
+// @dev Lifetime important to stick to contents -> lifetime of return val
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    // Iterate throught lines with `lines` method
+    for line in contents.lines() {
+        // Searching each line for query
+        if line.contains(query) {
+            // Storing matchin lines
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+// ------------------------------------------------------------------
+//                              TESTS
+// ------------------------------------------------------------------
+
+// TDD
+// 1. Write a test that fails and run it to make sure it fails for the reason you expect.
+// 2. Write or modify just enough code to make the new test pass.
+// 3. Refactor the code you just added or changed and make sure the tests continue to pass.
+// 4. Repeat from step 1!
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // 1. write a failing test
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
 }

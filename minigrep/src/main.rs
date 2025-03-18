@@ -14,9 +14,6 @@ fn main() {
         process::exit(1);
     });
 
-    println!("Searchin for `{}`", config.query);
-    println!("In file `{}`", config.file_path);
-
     // Handling errors returned by run (succes is empty)
     // Access run from lib crate name
     if let Err(e) = minigrep::run(config) {
