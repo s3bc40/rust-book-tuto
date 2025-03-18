@@ -21,7 +21,11 @@ impl Config {
         let file_path = args.get(2).expect("No file path in args").clone();
 
         // Bring env variable
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let ignore_case = if args.get(3).is_some() {
+            args.get(3).unwrap() == "1"
+        } else {
+            env::var("IGNORE_CASE").is_ok()
+        };
 
         Ok(Config {
             query,

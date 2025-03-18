@@ -10,14 +10,16 @@ fn main() {
 
     // Saving args
     let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
+        // Redirect print to stderr
+        eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
 
     // Handling errors returned by run (succes is empty)
     // Access run from lib crate name
     if let Err(e) = minigrep::run(config) {
-        println!("Application error: {}", e);
+        // Redirect print to stderr
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
