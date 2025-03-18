@@ -1,4 +1,7 @@
-use std::{env, fs};
+use std::{env, process};
+
+// Code from lib.rs with crate name
+use minigrep::Config;
 
 fn main() {
     // Reading args
@@ -6,35 +9,18 @@ fn main() {
     // dbg!(args);
 
     // Saving args
-    let config = Config::new(&args);
+    let config = Config::build(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
     println!("Searchin for `{}`", config.query);
     println!("In file `{}`", config.file_path);
 
-    // Reading a file
-    let content =
-        fs::read_to_string(config.file_path).expect("Should have been able to read the file");
-    println!("With text:\n```\n{}\n```", content);
-}
-
-// Grouping configuration values
-struct Config {
-    query: String,
-    file_path: String,
-}
-
-impl Config {
-    fn new(args: &[String]) -> Config {
-        // Refactored code
-        // Error handling
-        if args.len() < 3 {
-            panic!("Not enough arguments: 2 expected")
-        }
-        // @dev Many Rustaceans avoid using clone to fix ownership problems because of its runtime cost
-        // Gain simplicity other perf (fine here)
-        let query = args[1].clone();
-        let file_path = args.get(2).expect("No file path in args").clone();
-
-        Config { query, file_path }
+    // Handling errors returned by run (succes is empty)
+    // Access run from lib crate name
+    if let Err(e) = minigrep::run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
     }
 }
