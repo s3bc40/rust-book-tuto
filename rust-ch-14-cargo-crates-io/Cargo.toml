@@ -2,6 +2,8 @@
 name = "rust-ch-14-cargo-crates-io"
 version = "0.1.0"
 edition = "2024"
+description = "A rust book section about crate management."
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 
