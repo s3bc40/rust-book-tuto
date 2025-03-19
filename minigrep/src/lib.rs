@@ -9,23 +9,35 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        // Refactored code
-        // Error handling
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    // Using the Returned Iterator Directly
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        // Using Iterator Trait Methods Instead of Indexing
+        args.next(); // first value in `env::args`` is the name of the program
+
         // @dev Many Rustaceans avoid using clone to fix ownership problems because of its runtime cost
-        // Gain simplicity other perf (fine here)
-        let query = args[1].clone();
-        let file_path = args.get(2).expect("No file path in args").clone();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Query string not found"),
+        };
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("File path not found"),
+        };
 
         // Bring env variable
-        let ignore_case = if args.get(3).is_some() {
-            args.get(3).unwrap() == "1"
-        } else {
-            env::var("IGNORE_CASE").is_ok()
+        let ignore_case = match args.next() {
+            Some(arg) => arg == "1",
+            None => env::var("IGNORE_CASE").is_ok(),
         };
+
+        // Old way before iterator
+        // env::var("IGNORE_CASE").is_ok()
+        // let ignore_case = if args.get(3).is_some() {
+        //     args.get(3).unwrap() == "1"
+        // } else {
+        //     env::var("IGNORE_CASE").is_ok()
+        // };
 
         Ok(Config {
             query,
@@ -57,31 +69,32 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 // @dev Lifetime important to stick to contents -> lifetime of return val
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
+    // Old way without iterator
     // Iterate throught lines with `lines` method
-    for line in contents.lines() {
-        // Searching each line for query
-        if line.contains(query) {
-            // Storing matchin lines
-            results.push(line);
-        }
-    }
+    // let mut results = Vec::new();
+    // for line in contents.lines() {
+    //     // Searching each line for query
+    //     if line.contains(query) {
+    //         // Storing matchin lines
+    //         results.push(line);
+    //     }
+    // }
+    // results
 
-    results
+    // With iterator
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
-    let mut results = Vec::new();
 
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line);
-        }
-    }
-
-    results
+    contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .collect()
 }
 
 // ------------------------------------------------------------------
