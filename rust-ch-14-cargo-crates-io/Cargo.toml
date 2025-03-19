@@ -1,0 +1,15 @@
+[package]
+name = "rust-ch-14-cargo-crates-io"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# [profile.dev]
+# opt-level = 0 # Default optimization level for dev
+
+# [profile.release]
+# opt-level = 3 # Default optimization level for release
+
+[profile.dev]
+opt-level = 1
