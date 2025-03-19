@@ -1,0 +1,6 @@
+[package]
+name = "rust-ch-13-functional-lang"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
