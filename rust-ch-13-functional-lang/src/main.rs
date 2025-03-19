@@ -43,6 +43,7 @@ struct Rectangle {
 }
 
 fn main() {
+    // CLOSURE
     let store = Inventory {
         shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
     };
@@ -170,4 +171,39 @@ fn main() {
         r.width
     });
     println!("{list:#?}, sorted in {num_sort_operations} operations");
+
+    // ITERATORS
+    println!("\nITERATORS");
+    // Processing a Series of Items with Iterators
+    let v1 = vec![1, 2, 3];
+
+    let v1_iter = v1.iter();
+    // @dev using for on vec directly create the iter under the hood
+    // here we separate the process
+    // Iter handle the classic way of var index 0 and get vec index val
+    for val in v1_iter {
+        println!("Got: {val}");
+    }
+
+    // @dev Check `lib.rs` for test on iter
+
+    //The Iterator Trait and the next Method
+    // pub trait Iterator {
+    //     type Item; // associated type with this trait
+
+    //     fn next(&mut self) -> Option<Self::Item>;
+
+    //     // methods with default implementations elided
+    // }
+
+    // Methods that Produce Other Iterators
+    // @dev `Iterator adapters` are methods defined on the Iterator trait that don’t consume the iterator.
+    // v1.iter().map(|x| x + 1); // doesn’t do anything; the closure we’ve specified never gets called
+    // Iterators are lazy
+    let v1: Vec<i32> = vec![1, 2, 3];
+
+    let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+
+    assert_eq!(v2, vec![2, 3, 4]);
+
 }
