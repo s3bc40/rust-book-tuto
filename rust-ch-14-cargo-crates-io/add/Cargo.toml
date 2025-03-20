@@ -1,0 +1,4 @@
+# Creating a workspace
+[workspace]
+resolver = "2"
+members = ["add_one", "add_two", "adder"]
